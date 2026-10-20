@@ -1,0 +1,82 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -6,13 +6,78 @@
+ 
+ load_dotenv()
+ 
++class CustomPGVectorStore(PGVectorStore):
++    def __init__(self, connection_string=None, table_name="vectorstore", **kwargs):
++        super().__init__(connection_string=connection_string, table_name=table_name, **kwargs)
++        # Store connection parameters for later use
++        self.connection_string = connection_string
++        self.table_name = f"data_{table_name}"
++    
++    def add(self, nodes, **add_kwargs):
++        """Override to add custom columns during insert."""
++
++        conn = psycopg2.connect(self.connection_string)
++        cursor = conn.cursor()
++
++        node_ids = []  # Collect node IDs to return
++
++        try:
++            for idx, node in enumerate(nodes):
++                # Store the node ID for return value
++                node_ids.append(node.id_)
++
++
++                # Extract values for custom columns from node
++                external_id = node.metadata.get("external_id", None)
++                embeddingqueue_id = node.metadata.get("embeddingqueue_id", None)
++
++                # Remove from metadata to avoid duplication
++                if "external_id" in node.metadata:
++                    del node.metadata["external_id"]
++                
++                if "embeddingqueue_id" in node.metadata:
++                    del node.metadata["embeddingqueue_id"]
++
++                # Generate a numeric ID based on current timestamp and index
++                # This ensures uniqueness while being compatible with bigint type
++                import time
++                numeric_id = int(time.time() * 1000) + idx
++
++                # Create custom insert query using %s placeholders instead of $n
++                query = f"""
++                INSERT INTO {self.table_name} 
++                (id, embedding, text, metadata_, external_id, embeddingqueue_id) 
++                VALUES (%s, %s, %s, %s, %s, %s)
++                """
++                
++                # Execute with custom parameters
++                cursor.execute(
++                    query,
++                    (
++                        numeric_id,
++                        node.embedding,
++                        node.text,
++                        json.dumps(node.metadata),
++                        external_id,
++                        embeddingqueue_id
++                    )
++                )
++            conn.commit()
++            return node_ids
++        except Exception as e:
++            conn.rollback()
++            raise e
++        finally:
++            cursor.close()
++            conn.close()
++
+ def create_vector_store(request):
+     host = "localhost"
+     password = "password"
+     port = 5432
+     user = "postgres"
+     
+-    vector_store = PGVectorStore.from_params(
++    vector_store = CustomPGVectorStore.from_params(
+         database=request.tenant,
+         host=host,
+         password=password,

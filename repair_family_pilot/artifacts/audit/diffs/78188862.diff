@@ -1,0 +1,113 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -9,9 +9,7 @@
+ from langchain_community.vectorstores import Chroma
+ from langchain_openai import OpenAIEmbeddings
+ 
+-
+ load_dotenv()
+-
+ 
+ config = {
+     "OPENAI_API_KEY": os.getenv("OPENAI_API_KEY")
+@@ -28,21 +26,27 @@
+ 
+ 
+ def read_docs(pdf_file):
+-    pdf_loader = PyPDFLoader(pdf_file.filepath)
++    pdf_loader = PyPDFLoader(pdf_file.filepath)  
+     pdf_documents = pdf_loader.load()
+ 
+     text_splitter = CharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
+     documents = text_splitter.split_documents(pdf_documents)
+     
++    # add Document metadata
++    for doc in documents:
++        doc.metadata = {
++            "id": "1",
++            "source": pdf_file.filename,
++        }
++    
+     return documents
+-
+ 
+ def generate_and_store_embeddings(documents, pdf_file, user_id):
+     client = chromadb.PersistentClient(path="./trained_db")
+     collection = client.get_or_create_collection("PDF_Embeddings", embedding_function=embedding_functions.OpenAIEmbeddingFunction(api_key=config["OPENAI_API_KEY"], model_name=configs.EMBEDDINGS_MODEL))
+     now = datetime.now()
+ 
+-    
++    #custom metadata and ids I want to store along with the embeddings for each pdf
+     metadata = {"source": pdf_file.filename, "user": str(user_id), 'created_at': 
+                           now.strftime("%d/%m/%Y %H:%M:%S")}
+     ids = [str(uuid.uuid4()) for _ in range(len(documents))]
+@@ -67,52 +71,35 @@
+ 
+ 
+ 
+-
+ def run_agent(pdf_path, user_id):
+-   
++    """
++    Driver function that orchestrates the entire workflow
++    """
++    print(f"Starting agent with PDF: {pdf_path}")
++    print(f"User ID: {user_id}")
++    print("="*70)
++    
++    # Create mock file object
+     pdf_file = MockPDFFile(pdf_path, os.path.basename(pdf_path))
+     
+-   
+-    documents = read_docs(pdf_file) 
++    # Step 1: Read documents
++    print("\n[1] Reading documents...")
++    documents = read_docs(pdf_file)  
+     print(f"    ✓ Loaded {len(documents)} document chunks")
+     
+-   
++    # Step 2: Generate and store embeddings
++    print("\n[2] Generating and storing embeddings...")
+     vectordb = generate_and_store_embeddings(documents, pdf_file, user_id)
+     
+     if isinstance(vectordb, dict):
+-       
++        print(f"    ✗ Error: {vectordb}")
+         return None, pdf_file.filename
+     
++    print(f"    ✓ Successfully stored embeddings")
+     
+     return vectordb, pdf_file.filename
+ 
+ 
+ if __name__ == "__main__":
+-
+-    pdf_path = None
+-    user_id = "test_user_123"
+-    
+-   
+-    if os.path.exists("docs"):
+-        for file in os.listdir("docs"):
+-            if file.endswith(".pdf"):
+-                pdf_path = os.path.join("docs", file)
+-                break
+-    
+-    if not pdf_path:
+-        print("No PDF file found in docs folder")
+-        exit(1)
+-    
+-    
+-    vectordb, filename = run_agent(pdf_path, user_id)
+-    
+-    if vectordb is None:
+-        print("Agent failed to create embeddings")
+-        exit(1)
+-    
+-    
+-    result = vectordb.get(where={"source": filename})
+-    print(len(result))
+-    print(len(result['ids']))
+-   
+-   
++    # Test inputs
++    pass 

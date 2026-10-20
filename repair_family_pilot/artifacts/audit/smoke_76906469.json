@@ -1,0 +1,133 @@
+{
+  "empty": {
+    "technical_ok": true,
+    "problems": [],
+    "correct": false,
+    "model_calls": 2,
+    "input_tokens": 619,
+    "output_tokens": 23,
+    "memory_snapshots": [
+      {
+        "memory": {
+          "contents": [
+            "what is the capital of France?",
+            "Paris."
+          ],
+          "roles": [
+            "human",
+            "ai"
+          ]
+        }
+      },
+      {
+        "memory": {
+          "contents": [
+            "what is the capital of France?",
+            "Paris.",
+            "what is the last question I asked?",
+            "\u201cwhat is the last question I asked?\u201d"
+          ],
+          "roles": [
+            "human",
+            "ai",
+            "human",
+            "ai"
+          ]
+        }
+      }
+    ],
+    "status": "finished",
+    "error": ""
+  },
+  "A": {
+    "technical_ok": true,
+    "problems": [],
+    "correct": false,
+    "model_calls": 2,
+    "input_tokens": 619,
+    "output_tokens": 23,
+    "memory_snapshots": [
+      {
+        "memory": {
+          "contents": [
+            "what is the capital of France?",
+            "Paris."
+          ],
+          "roles": [
+            "human",
+            "ai"
+          ]
+        }
+      },
+      {
+        "memory": {
+          "contents": [
+            "what is the capital of France?",
+            "Paris.",
+            "what is the last question I asked?",
+            "\u201cwhat is the last question I asked?\u201d"
+          ],
+          "roles": [
+            "human",
+            "ai",
+            "human",
+            "ai"
+          ]
+        }
+      }
+    ],
+    "status": "finished",
+    "error": ""
+  },
+  "B": {
+    "technical_ok": true,
+    "problems": [],
+    "correct": false,
+    "model_calls": 0,
+    "input_tokens": 0,
+    "output_tokens": 0,
+    "memory_snapshots": [],
+    "status": "task_failure",
+    "error": "chat_history should be a list of base messages, got str"
+  },
+  "AB": {
+    "technical_ok": true,
+    "problems": [],
+    "correct": true,
+    "model_calls": 2,
+    "input_tokens": 1042,
+    "output_tokens": 57,
+    "memory_snapshots": [
+      {
+        "memory": {
+          "contents": [
+            "what is the capital of France?",
+            "Paris."
+          ],
+          "roles": [
+            "human",
+            "ai"
+          ]
+        }
+      },
+      {
+        "memory": {
+          "contents": [
+            "what is the capital of France?",
+            "Paris.",
+            "what is the last question I asked?",
+            "\u201cWhat is the capital of France?\u201d"
+          ],
+          "roles": [
+            "human",
+            "ai",
+            "human",
+            "ai"
+          ]
+        }
+      }
+    ],
+    "status": "finished",
+    "error": ""
+  }
+}

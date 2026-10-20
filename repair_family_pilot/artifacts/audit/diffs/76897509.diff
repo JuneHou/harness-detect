@@ -1,0 +1,68 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -1,5 +1,6 @@
+ import os
+ import random
++from typing import Dict, Any, List
+ from dotenv import load_dotenv, find_dotenv
+ from langchain.embeddings import OpenAIEmbeddings
+ from langchain.vectorstores import Chroma
+@@ -10,6 +11,8 @@
+ from langchain.text_splitter import RecursiveCharacterTextSplitter
+ from langchain.cache import InMemoryCache
+ from langchain.globals import set_llm_cache
++from langchain.schema import Document
++from langchain.callbacks.manager import CallbackManagerForChainRun
+ 
+ _ = load_dotenv(find_dotenv())
+ set_llm_cache(InMemoryCache())
+@@ -20,6 +23,31 @@
+ 
+ def get_random_key(key_pool):
+     return random.choice([k for k in key_pool if k is not None])
++
++
++class VectorStoreRetrieverWithFiltering(VectorStoreRetriever):
++
++    def _get_relevant_documents(self, query: str, filter: dict = None) -> List[Document]:
++        if self.search_type == "similarity":
++            if filter:
++                docs = self.vectorstore.similarity_search(query, filter=filter, **self.search_kwargs)
++            else:
++                docs = self.vectorstore.similarity_search(query, **self.search_kwargs)
++        else:
++            if filter:
++                docs = self.vectorstore.similarity_search(query, filter=filter, **self.search_kwargs)
++            else:
++                docs = self.vectorstore.similarity_search(query, **self.search_kwargs)
++        return docs
++
++
++class ConversationalRetrievalChainPassArgs(ConversationalRetrievalChain):
++
++    def _get_docs(self, question: str, inputs: Dict[str, Any], *,
++        run_manager: CallbackManagerForChainRun) -> List[Document]:
++        filter_param = inputs.get('filter', None)
++        docs = self.retriever._get_relevant_documents(question, filter_param)
++        return self._reduce_tokens_below_limit(docs)
+ 
+ 
+ def run_agent(query, pdf_paths):
+@@ -40,14 +68,13 @@
+     
+     db = Chroma.from_documents(all_texts, embeddings)
+     
+-    qa = ConversationalRetrievalChain.from_llm(
++    qa = ConversationalRetrievalChainPassArgs.from_llm(
+         OpenAI(openai_api_key=get_random_key(OPENAI_API_KEY_POOL), cache=True, temperature=0),
+-        VectorStoreRetriever(vectorstore=db),
++        VectorStoreRetrieverWithFiltering(vectorstore=db),
+         verbose=True,
+         return_source_documents=True)
+ 
+-    filter = {'source': 'paper2.pdf'} #it means the information from paper2.pdf should be used to answer the query.
+-    #if it answers from paper2.pdf, then the filtering is working correctly.
++    filter = {'source': 'paper2.pdf'} # cannot answer from paper2.pdf but can answer from paper1.pdf
+ 
+     result = qa({"question": query, "chat_history": [], "filter": filter})
+     

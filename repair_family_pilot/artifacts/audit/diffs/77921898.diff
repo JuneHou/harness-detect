@@ -1,0 +1,20 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -30,7 +30,7 @@
+         
+         docsearch = Chroma.from_documents(all_texts, embeddings, persist_directory=persist_directory)
+     
+-    docsearch = Chroma(persist_directory, embedding_function=embeddings )  
++    docsearch = Chroma(persist_directory=persist_directory, embedding_function=embeddings ) 
+     retriever = docsearch.as_retriever(search_kwargs={"k": 5})
+     docs = retriever.get_relevant_documents(user_input)
+     print(f"Number of documents retrieved: {len(docs)}")
+@@ -45,7 +45,7 @@
+     docs = run_agent(query, document_paths)
+     
+     print("\n=== User Query Result ===")
+-    print(f"Query: {query}")
++    print(f"Query: {query,docs}")
+     print(f"Number of relevant documents: {len(docs)}")
+     
+     for i, doc in enumerate(docs):

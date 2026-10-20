@@ -1,0 +1,40 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -8,13 +8,14 @@
+ from langchain_core.prompts import ChatPromptTemplate
+ from langchain_core.output_parsers import StrOutputParser
+ from langchain_core.runnables import RunnablePassthrough
++from langchain import hub
+ 
+ load_dotenv()
+ 
+ def run_agent(query):
+ 
+     model = ChatOpenAI(
+-        temperature=0.1,
++        temperature=0.7,
+         model="gpt-3.5-turbo",
+         openai_api_key=os.getenv("OPENAI_API_KEY"),
+     )
+@@ -34,13 +35,7 @@
+         description="Spin up a simple api server using LangChain's Runnable interfaces",
+     )
+ 
+-    ANSWER_TEMPLATE = """Answer the question based on the following context:
+-    {context}
+-
+-    Question: {question}
+-    """
+-
+-    prompt = ChatPromptTemplate.from_template(ANSWER_TEMPLATE)
++    prompt = hub.pull("rlm/rag-prompt")
+ 
+     chain = (
+         {
+@@ -57,5 +52,5 @@
+     return result
+ 
+ if __name__ == "__main__":
+-    query = "What is the highest budget movie?"
++    query = "Which movie discusses about Quantum of Solace?"
+     print(run_agent(query))

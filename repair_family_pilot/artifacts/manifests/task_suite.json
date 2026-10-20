@@ -1,0 +1,198 @@
+[
+  {
+    "group_id": "prior_question-user-gap0",
+    "needed": "prior_question",
+    "origin": "user",
+    "gap": 0,
+    "turns": [
+      "what is the capital of France?",
+      "Which country did my first question name?"
+    ],
+    "initial_memory": [],
+    "expected": "france"
+  },
+  {
+    "group_id": "prior_question-user-gap2",
+    "needed": "prior_question",
+    "origin": "user",
+    "gap": 2,
+    "turns": [
+      "what is the capital of France?",
+      "Note 1: the sky is blue.",
+      "Note 2: the sky is blue.",
+      "Which country did my first question name?"
+    ],
+    "initial_memory": [],
+    "expected": "france"
+  },
+  {
+    "group_id": "prior_question-user-gap5",
+    "needed": "prior_question",
+    "origin": "user",
+    "gap": 5,
+    "turns": [
+      "what is the capital of France?",
+      "Note 1: the sky is blue.",
+      "Note 2: the sky is blue.",
+      "Note 3: the sky is blue.",
+      "Note 4: the sky is blue.",
+      "Note 5: the sky is blue.",
+      "Which country did my first question name?"
+    ],
+    "initial_memory": [],
+    "expected": "france"
+  },
+  {
+    "group_id": "prior_question-assistant-gap0",
+    "needed": "prior_question",
+    "origin": "assistant",
+    "gap": 0,
+    "turns": [
+      "Which country did the earlier reply name?"
+    ],
+    "initial_memory": [
+      {
+        "role": "ai",
+        "content": "The earlier question named France."
+      }
+    ],
+    "expected": "france"
+  },
+  {
+    "group_id": "prior_question-assistant-gap2",
+    "needed": "prior_question",
+    "origin": "assistant",
+    "gap": 2,
+    "turns": [
+      "Note 1: the sky is blue.",
+      "Note 2: the sky is blue.",
+      "Which country did the earlier reply name?"
+    ],
+    "initial_memory": [
+      {
+        "role": "ai",
+        "content": "The earlier question named France."
+      }
+    ],
+    "expected": "france"
+  },
+  {
+    "group_id": "prior_question-assistant-gap5",
+    "needed": "prior_question",
+    "origin": "assistant",
+    "gap": 5,
+    "turns": [
+      "Note 1: the sky is blue.",
+      "Note 2: the sky is blue.",
+      "Note 3: the sky is blue.",
+      "Note 4: the sky is blue.",
+      "Note 5: the sky is blue.",
+      "Which country did the earlier reply name?"
+    ],
+    "initial_memory": [
+      {
+        "role": "ai",
+        "content": "The earlier question named France."
+      }
+    ],
+    "expected": "france"
+  },
+  {
+    "group_id": "stated_capital-user-gap0",
+    "needed": "stated_capital",
+    "origin": "user",
+    "gap": 0,
+    "turns": [
+      "Please remember: the capital of Peru is Lima.",
+      "What capital did I tell you to remember?"
+    ],
+    "initial_memory": [],
+    "expected": "lima"
+  },
+  {
+    "group_id": "stated_capital-user-gap2",
+    "needed": "stated_capital",
+    "origin": "user",
+    "gap": 2,
+    "turns": [
+      "Please remember: the capital of Peru is Lima.",
+      "Note 1: the sky is blue.",
+      "Note 2: the sky is blue.",
+      "What capital did I tell you to remember?"
+    ],
+    "initial_memory": [],
+    "expected": "lima"
+  },
+  {
+    "group_id": "stated_capital-user-gap5",
+    "needed": "stated_capital",
+    "origin": "user",
+    "gap": 5,
+    "turns": [
+      "Please remember: the capital of Peru is Lima.",
+      "Note 1: the sky is blue.",
+      "Note 2: the sky is blue.",
+      "Note 3: the sky is blue.",
+      "Note 4: the sky is blue.",
+      "Note 5: the sky is blue.",
+      "What capital did I tell you to remember?"
+    ],
+    "initial_memory": [],
+    "expected": "lima"
+  },
+  {
+    "group_id": "stated_capital-assistant-gap0",
+    "needed": "stated_capital",
+    "origin": "assistant",
+    "gap": 0,
+    "turns": [
+      "What capital did the earlier reply give?"
+    ],
+    "initial_memory": [
+      {
+        "role": "ai",
+        "content": "The capital of Peru is Lima."
+      }
+    ],
+    "expected": "lima"
+  },
+  {
+    "group_id": "stated_capital-assistant-gap2",
+    "needed": "stated_capital",
+    "origin": "assistant",
+    "gap": 2,
+    "turns": [
+      "Note 1: the sky is blue.",
+      "Note 2: the sky is blue.",
+      "What capital did the earlier reply give?"
+    ],
+    "initial_memory": [
+      {
+        "role": "ai",
+        "content": "The capital of Peru is Lima."
+      }
+    ],
+    "expected": "lima"
+  },
+  {
+    "group_id": "stated_capital-assistant-gap5",
+    "needed": "stated_capital",
+    "origin": "assistant",
+    "gap": 5,
+    "turns": [
+      "Note 1: the sky is blue.",
+      "Note 2: the sky is blue.",
+      "Note 3: the sky is blue.",
+      "Note 4: the sky is blue.",
+      "Note 5: the sky is blue.",
+      "What capital did the earlier reply give?"
+    ],
+    "initial_memory": [
+      {
+        "role": "ai",
+        "content": "The capital of Peru is Lima."
+      }
+    ],
+    "expected": "lima"
+  }
+]

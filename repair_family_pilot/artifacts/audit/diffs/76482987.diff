@@ -1,0 +1,11 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -13,7 +13,7 @@
+         ids=["id1", "id2"]
+     )   
+ 
+-    return collection.get()
++    return collection.get(include=['embeddings', 'documents', 'metadatas'])
+ 
+ if __name__ == '__main__':
+     documents = ["This is a document", "This is another document"]

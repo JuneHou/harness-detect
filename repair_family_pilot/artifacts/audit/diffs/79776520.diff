@@ -1,0 +1,15 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -51,11 +51,10 @@
+         final_message = step["messages"][-1]
+     return final_message.content
+ 
+-
+ def main():
+     agent_executor, memory, config = initialize_agent()
+     response1 = run_agent(agent_executor, memory, config, "Hi! I am Bob!")
+-    response2 = run_agent(agent_executor, memory, config, "What's my name?")
++    response2 = run_agent(agent_executor, memory, config, "Do you know my name?")
+     print(response1)
+     print(response2)
+ 

@@ -1,0 +1,40 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -15,10 +15,9 @@
+ 
+ 
+ def run_agent(queries):
+-    results = []    
+    
+     files = ['drivers.csv','drivers_full.csv']
+-
++    results = []
+     for file in files:
+         print("=====================================")
+         print(file)
+@@ -40,7 +39,7 @@
+             for query in queries:
+                 qa_stuff = RetrievalQA.from_chain_type(
+                     llm=OpenAI(temperature=0,batch_size=20), 
+-                    chain_type="map_reduce", 
++                    chain_type="stuff", 
+                     retriever=retriever,
+                     verbose=True
+                 )
+@@ -48,7 +47,6 @@
+                 print(query)
+                 result = qa_stuff.run(query)
+                 results.append(result)
+-
+                 print(result)
+                 
+             print(cb)
+@@ -56,6 +54,6 @@
+ 
+ if __name__ == "__main__":
+     queries = [
+-        "Tell me the name of every driver who is German"     
++        "Tell me the name of every driver who is German"
+     ]
+-    res = run_agent(queries)
++    run_agent(queries)

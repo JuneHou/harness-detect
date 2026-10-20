@@ -1,0 +1,8 @@
+Metadata-Version: 2.4
+Name: repair_family_pilot
+Version: 0.1.0
+Requires-Python: >=3.9
+Requires-Dist: numpy>=2.4
+Requires-Dist: scipy>=1.16
+Requires-Dist: pyarrow>=24
+Requires-Dist: pytest>=8

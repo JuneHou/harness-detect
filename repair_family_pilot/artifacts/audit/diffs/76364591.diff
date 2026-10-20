@@ -1,0 +1,36 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -4,22 +4,21 @@
+ from langchain.memory import ConversationBufferMemory
+ from langchain_openai import ChatOpenAI
+ from langchain.tools import BaseTool
+-
++from typing import Union
+ 
+ load_dotenv()
+ os.environ["OPENAI_API_KEY"] = os.getenv("OPENAI_API_KEY")
+ 
+-
+ class CalculatorTool(BaseTool):
+     name = "calculator"
+     description = "Performs basic arithmetic"
++    return_direct = True  
+ 
+     def _run(self, query: str) -> str:
+         return str(eval(query))
+ 
+     async def _arun(self, query: str) -> str:
+         raise NotImplementedError()
+-
+ 
+ def create_agent():
+     llm_gpt4 = ChatOpenAI(model="gpt-4", temperature=0)
+@@ -35,7 +34,7 @@
+         # agent_kwargs=dict(output_parser=output_parser),
+     )
+ 
+-
+ def run_agent(prompt: str) -> str:
+     agent = create_agent()
+     return agent.run(prompt)
++

@@ -1,0 +1,49 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -16,26 +16,30 @@
+     # Set up embedding model (will use OPENAI_API_KEY from .env)
+     Settings.embed_model = OpenAIEmbedding(model="text-embedding-3-small")
+     
+-    # Create node with None in metadata
+     node_01 = TextNode(
+         text="This document has None in the metadata",
+         id_="node_01",
+-        metadata={"start_date": None},
++        metadata={"start_date": ""},
++    )
++    node_02 = TextNode(
++        text="This document has start date in the metadata",
++        id_="node_02",
++        metadata={"start_date": "20/03/2023"},
+     )
+     
+     # Create index
+-    doc_index = VectorStoreIndex([node_01])
++    doc_index = VectorStoreIndex([node_01, node_02])
+     
+     # Debug: Check what's actually stored
+     print("Index nodes:")
+     print([node.metadata for node in doc_index.docstore.docs.values()])
+     print()
+     
+-    # Try to filter by None value
++    # Filter by empty string (null value)
+     filter_null_start_date = MetadataFilter(
+         key="start_date", 
+         operator=FilterOperator.EQ, 
+-        value=None
++        value=""
+     )
+     filters = MetadataFilters(filters=[filter_null_start_date])
+     retriever = doc_index.as_retriever(filters=filters, similarity_top_k=1)
+@@ -56,7 +60,7 @@
+     
+     response = run_agent(query)
+     
+-    if not response:
+-        print("\nResult: No nodes retrieved (None is not filterable)")
++    if response:
++        print(f"\nResult: Successfully retrieved {len(response)} node(s) with empty start_date")
+     else:
+-        print(f"\nResult: Found {len(response)} node(s)")
++        print("\nResult: No nodes retrieved")

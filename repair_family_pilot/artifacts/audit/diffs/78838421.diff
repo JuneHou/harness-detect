@@ -1,0 +1,118 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -1,19 +1,24 @@
++
+ import logging
++import ollama
++from langchain.prompts import ChatPromptTemplate, PromptTemplate
++from langchain.retrievers.multi_query import MultiQueryRetriever
++from langchain_community.chat_models import ChatOllama
+ from langchain_community.document_loaders import UnstructuredPDFLoader
+ from langchain_community.embeddings import OllamaEmbeddings
++from langchain_community.vectorstores import FAISS
++from langchain_core.output_parsers import StrOutputParser
++from langchain_core.runnables import RunnablePassthrough
+ from langchain_text_splitters import RecursiveCharacterTextSplitter
+-from langchain_community.vectorstores import Chroma
+-from langchain.prompts import ChatPromptTemplate, PromptTemplate
+-from langchain_core.output_parsers import StrOutputParser
+-from langchain_community.chat_models import ChatOllama
+-from langchain_core.runnables import RunnablePassthrough
+-from langchain.retrievers.multi_query import MultiQueryRetriever
+ 
+-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
++# Configure logging
++logging.basicConfig(
++    level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
++)
+ 
+ 
+ def run_agent(question):
+-    local_path = "./paper1.pdf"
++    local_path = "paper1.pdf"
+     try:
+         # Local PDF file uploads
+         if local_path:
+@@ -25,37 +30,35 @@
+             raise ValueError("No PDF file uploaded")
+         
+         # Preview first page
+-        logging.info(f"First page content preview: {data[0].page_content[:500]}...")
++        # logging.info(f"First page content preview: {data[0].page_content[:500]}...")
+         
+-        # Split and chunk 
+-        text_splitter = RecursiveCharacterTextSplitter(chunk_size=7500, chunk_overlap=100)
++        # Split and chunk
++        text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=100)
+         logging.info("Text splitter created")
+         chunks = text_splitter.split_documents(data)
+         logging.info(f"Created {len(chunks)} chunks")
+         
++        # Add to vector database
+         logging.info("Creating Vector db")
+         try:
+-            embedding_model = OllamaEmbeddings(model="nomic-embed-text", show_progress=True)
+-            print("Embedding", embedding_model)
+-            vector_db = Chroma.from_documents(
+-                documents=chunks,
+-                embedding=embedding_model,
+-                collection_name="local-rag"
++            ollama.embeddings(
++                model="mxbai-embed-large",
++                # prompt='Llamas are members of the camelid family',
+             )
+-            logging.info("Local db created successfully")
++            embedding_model = OllamaEmbeddings(model="mxbai-embed-large")
++            vectorstore_db = FAISS.from_documents(
++                documents=chunks, embedding=embedding_model
++            )
++            vectorstore_db.save_local("faiss_index")
++            vector_retriever = vectorstore_db.as_retriever()
+         except Exception as e:
+             logging.error(f"Error creating vector db: {e}")
+-              
+-        
+-        if vector_db:
+-            logging.info("Vector db verification successful")
+-        else:
+-            logging.error("Vector db creation failed")
+-            # raise ValueError("Vector db creation failed")
++            raise  # Re-raise the exception to stop further execution
+         
+         # LLM from Ollama
+-        local_model = "llama3"
++        local_model = "mistral"
+         llm = ChatOllama(model=local_model)
++        print("local llm modal", local_model)
+         logging.info("LLM model loaded")
+         
+         QUERY_PROMPT = PromptTemplate(
+@@ -70,9 +73,7 @@
+         logging.info("Query prompt created")
+         
+         retriever = MultiQueryRetriever.from_llm(
+-            vector_db.as_retriever(), 
+-            llm,
+-            prompt=QUERY_PROMPT
++            vector_retriever, llm, prompt=QUERY_PROMPT  # Use the correct retriever
+         )
+         logging.info("Retriever created")
+         
+@@ -93,7 +94,6 @@
+         logging.info("Chain created")
+         
+         response = chain.invoke(question)
+-        print(response)
+         logging.info("Chain invoked")
+         logging.info(f"Response: {response}")
+         
+@@ -103,9 +103,6 @@
+         logging.error(f"An error occurred: {e}")
+         return None
+ 
+-
+-
+-
+ if __name__ == "__main__":
+     question = "What are the 5 pillars of global cooperation?"
+     response = run_agent(question)

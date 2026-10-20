@@ -1,0 +1,37 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -4,6 +4,7 @@
+ from langchain.embeddings.openai import OpenAIEmbeddings
+ from dotenv import load_dotenv
+ import os
++from langchain_core.prompts import PromptTemplate
+ 
+ load_dotenv()
+ api_key = os.getenv("OPENAI_API_KEY")
+@@ -21,10 +22,20 @@
+     embeddings = OpenAIEmbeddings(openai_api_key=api_key)
+     db = FAISS.from_texts(docs, embeddings, metadatas=metadatas)
+ 
++    prompt_template = """Question: {question}
++    Answer in Italian based on the following summaries:
++    {summaries}"""
++    PROMPT = PromptTemplate(
++        template=prompt_template,
++        input_variables=["summaries", "question"] 
++    )
++    chain_type_kwargs = {"prompt": PROMPT}
++
+     chain = RetrievalQAWithSourcesChain.from_chain_type(
+         llm,
+         chain_type="stuff",
+-        retriever=db.as_retriever()
++        retriever=db.as_retriever(),
++        chain_type_kwargs=chain_type_kwargs
+     )
+ 
+     return chain
+@@ -32,4 +43,3 @@
+ if __name__ == "__main__":
+     print(run_agent())
+     
+-

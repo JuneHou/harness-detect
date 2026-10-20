@@ -1,0 +1,33 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -1,7 +1,7 @@
+ import asyncio
+ 
+-def run_agent(texts):
+-    
++async def run_agent(texts):
++   
+     import os
+     from time import time
+ 
+@@ -29,11 +29,11 @@
+     print()
+ 
+     start = time()
+-    res_aa = chain.aapply(texts)
++    res_aa = await chain.aapply(texts)
+     print(res_aa)
+     print(f"aapply time taken: {time() - start:.2f} seconds")
+     
+-    return res_a
++    return res_aa
+ 
+ 
+ 
+@@ -44,5 +44,5 @@
+         {'text': 'In meiner Freizeit, spiele ich gerne Fussball.'}
+     ]
+     
+-    result = run_agent(texts)
++    result = asyncio.run(run_agent(texts))
+     print("\nReturned result:", result)

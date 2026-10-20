@@ -1,0 +1,20 @@
+{
+  "assignment": {
+    "prior_question-user-gap2": "donor",
+    "prior_question-user-gap5": "donor",
+    "prior_question-assistant-gap2": "donor",
+    "stated_capital-user-gap0": "donor",
+    "stated_capital-user-gap5": "donor",
+    "stated_capital-assistant-gap0": "donor",
+    "prior_question-user-gap0": "calibration",
+    "stated_capital-assistant-gap5": "calibration",
+    "prior_question-assistant-gap0": "calibration",
+    "prior_question-assistant-gap5": "test",
+    "stated_capital-assistant-gap2": "test",
+    "stated_capital-user-gap2": "test"
+  },
+  "group_count": 12,
+  "donor": 6,
+  "calibration": 3,
+  "test": 3
+}

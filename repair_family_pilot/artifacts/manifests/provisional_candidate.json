@@ -1,0 +1,84 @@
+{
+  "selected_case": "76906469",
+  "repairs": [
+    {
+      "repair_id": "A",
+      "mechanism": "memory representation",
+      "scope": "ConversationBufferMemory constructor in run_buggy.py",
+      "old": "memory = ConversationBufferMemory(memory_key=\"chat_history\")",
+      "new": "memory = ConversationBufferMemory(memory_key=\"chat_history\", return_messages=True)",
+      "why_independent": "This patch changes only the object returned as chat history. It leaves the agent class, the parsing flag, and the pinned model id as they are in the buggy program."
+    },
+    {
+      "repair_id": "B",
+      "mechanism": "agent control and parsing policy",
+      "scope": "initialize_agent call and run_agent call site in run_buggy.py",
+      "old": "agent_test = initialize_agent(\n    tools=tools,\n    llm=llm,\n    agent=AgentType.CHAT_ZERO_SHOT_REACT_DESCRIPTION,\n    handle_parsing_errors=True,\n    memory=memory,\n    verbose=False\n)",
+      "new": "agent_test = initialize_agent(\n    tools,\n    llm,\n    agent=AgentType.CHAT_CONVERSATIONAL_REACT_DESCRIPTION,\n    verbose=False,\n    memory=memory\n)",
+      "why_independent": "This patch changes the agent class and removes the parsing-error handler. It does not edit the memory constructor or the model id. The call name stays agent_test so the patch applies without the memory edit."
+    }
+  ],
+  "preliminary_outcomes": {
+    "empty": [
+      "task_failure",
+      "task_failure",
+      "task_failure"
+    ],
+    "A": [
+      "task_failure",
+      "task_failure",
+      "task_failure"
+    ],
+    "B": [
+      "task_failure",
+      "task_failure",
+      "task_failure"
+    ],
+    "AB": [
+      "success",
+      "success",
+      "success"
+    ]
+  },
+  "probability_supported_family": "unresolved",
+  "scientific_qualification": "pending",
+  "claim": "The candidate configurations execute; their preliminary outcomes are recorded; the proposed task grid and correctness checks are ready for review. Scientific qualification remains pending.",
+  "model_config": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "none",
+    "temperature": 0,
+    "applied_to": [
+      "agent",
+      "llm-math"
+    ],
+    "configurations": [
+      "empty",
+      "A",
+      "B",
+      "AB"
+    ],
+    "frozen_before_donor_collection": true
+  },
+  "smoke": {
+    "empty": {
+      "technical_ok": true,
+      "correct": false,
+      "problems": []
+    },
+    "A": {
+      "technical_ok": true,
+      "correct": false,
+      "problems": []
+    },
+    "B": {
+      "technical_ok": true,
+      "correct": false,
+      "problems": []
+    },
+    "AB": {
+      "technical_ok": true,
+      "correct": true,
+      "problems": []
+    }
+  }
+}

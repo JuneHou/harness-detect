@@ -1,0 +1,16 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -45,7 +45,12 @@
+         
+         self.schema = []
+         for table_name in metadata_obj.tables.keys():
+-            self.schema.append(SQLTableSchema(table_name=table_name))
++            self.schema.append(
++                SQLTableSchema(
++                    table_name=table_name,
++                    context_str=f"(note) you will need to typecast the values when performing a sum on the data field. The data field has the structure: {metadata_json}",
++                )
++            )
+         
+         # We dump the table schema information into a vector index. The vector index is stored
+         # within the context builder for future use.

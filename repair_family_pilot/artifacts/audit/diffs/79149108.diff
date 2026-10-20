@@ -1,0 +1,10 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -36,6 +36,7 @@
+         del(messages[1])
+     
+     ai_msg = llm.invoke(messages)
++    messages.append({'role': 'assistant', 'content': ai_msg.content})
+     return ai_msg.content
+ 
+ @app.route('/')

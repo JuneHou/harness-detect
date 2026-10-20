@@ -1,0 +1,33 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -16,8 +16,8 @@
+     @property
+     def _llm_type(self) -> str:
+         return "custom"
+-    def _call(self, prompt: str, stop: Optional[List[str]] = None) -> str:
+-        reply = self.llm(prompt)
++    def _call(self, prompt: str, stop: Optional[List[str]] = None, **kwargs) -> dict[str, Any]:
++        reply = self.llm(prompt, stop=stop, **kwargs)
+         f = open(self.log, 'a')
+         f.write('\n{\n' + prompt + '\n}{\n' + reply + '\n}\n' + '.'*100)
+         f.close()
+@@ -26,7 +26,7 @@
+     def _identifying_params(self) -> Mapping[str, Any]:
+         """Get the identifying parameters."""
+         return {"llm": self.llm}
+-    
++
+ 
+ def setup_components():
+   
+@@ -79,9 +79,8 @@
+ 
+ if __name__ == "__main__":
+ 
+-    prompt = "What is 5-7?"
++    prompt = "What is sin(3)/cos(5)?"
+     
+     response = run_agent(prompt)
+     
+     print(response)
+-    print(type(response), response["output"])

@@ -1,0 +1,18 @@
+candidate_count: 2
+configurations: [empty, A, B, AB]
+success_threshold: 0.8
+reference_repeats: 20
+confirmation_repeats: 10
+development_repeats: 3
+donor_groups: 30
+calibration_groups: 15
+test_groups: 15
+split_seed: 20261020
+calibration_alpha: 0.10
+familywise_binomial_alpha: 0.05
+lambda_grid: [0, 0.01, 0.1, 1, 10]
+query_budgets: [0, 1, 2, 4]
+max_infrastructure_retries: 2
+selected_case: null
+model_config: null
+resource_caps: null

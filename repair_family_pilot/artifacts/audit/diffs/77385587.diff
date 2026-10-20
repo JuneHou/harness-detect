@@ -1,0 +1,29 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -7,6 +7,8 @@
+ from langchain.storage import InMemoryStore
+ from langchain.schema import Document
+ import nltk
++from langchain.storage import LocalFileStore
++from langchain.storage._lc_store import create_kv_docstore
+ 
+ def run_agent(query,store_location="./store_location"):
+ 
+@@ -24,6 +26,8 @@
+         model_name="BAAI/bge-large-en-v1.5",
+         cache_folder=hf_embed_path
+     )
++    fs = LocalFileStore(store_location)
++    store = create_kv_docstore(fs)
+ 
+     child_splitter = NLTKTextSplitter(chunk_size=400)
+ 
+@@ -33,7 +37,7 @@
+         persist_directory="./chroma_db_child"
+     )
+ 
+-    store = InMemoryStore()
++    
+ 
+     retriever = ParentDocumentRetriever(
+         vectorstore=vectorstore,

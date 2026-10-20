@@ -1,0 +1,22 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -25,11 +25,16 @@
+         verbose=True,
+     )
+ 
+-    response = llm.complete(query)
++    response_iter = llm.stream_complete(query)
++    full_response = ""
++    for chunk in response_iter:
++        full_response += chunk.delta  
++        print(chunk.delta, end="", flush=True)  
+ 
+-    return response
++    print("\n\nFull response:")
++    return full_response
+ 
+ if __name__ == "__main__":
+-    query = "What is the capital of France?"
++    query = "What is the capital of France? Answer in one word."
+     response = run_agent(query)
+     print(response)

@@ -1,0 +1,13 @@
+{
+  "feature_names": [
+    "task_char_len",
+    "task_turn_count",
+    "diagnostic_model_calls",
+    "diagnostic_tool_calls",
+    "diagnostic_parser_error_count",
+    "diagnostic_token_estimate",
+    "diagnostic_history_messages"
+  ],
+  "evidence": "structured diagnostic events, not repaired outputs",
+  "scaling": "donor mean and standard deviation only"
+}

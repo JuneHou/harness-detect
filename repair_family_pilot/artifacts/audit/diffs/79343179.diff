@@ -1,0 +1,36 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -6,13 +6,14 @@
+ from langchain_openai import ChatOpenAI
+ from langchain_experimental.utilities import PythonREPL
+ from langchain import hub
++import json
+ import dotenv
+ dotenv.load_dotenv()
+ 
+ @tool
+ def load_excel_response(filepath: str):
+     """Load an Excel file and return a transformed DataFrame."""
+-    df = pd.read_excel(filepath, skiprows=2, names=['responses']).reset_index(drop=True)
++    df = pd.read_excel(filepath).reset_index(drop=True)
+     df = df.select_dtypes(include=['object'])
+     return df # df.to_json()
+ 
+@@ -34,10 +35,15 @@
+     agent_executor = AgentExecutor(agent=shell_agent, tools=tools_list, verbose=True)
+ 
+     response = agent_executor.invoke({"input": user_prompt})
++    response = response["output"]
++    response = json.loads(response)
++    with open(file_name, "w", encoding="utf-8") as f:
++        json.dump(response, f, indent=2)
++
+     return response
+ 
+ if __name__ == "__main__":
+     path = 'excel_file.xlsx'
+-    user_prompt = f"Load the Excel file located at {path} and assign the result to a variable named df."
++    user_prompt = f"Load the Excel file located at {path} and return it is a json. ONLY RETURN THE JSON. No other text."
+     result = run_agent(user_prompt)
+-    print(result)
++    print(result,"data.json")

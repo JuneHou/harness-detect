@@ -1,0 +1,19 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -4,6 +4,7 @@
+ from langchain.globals import set_verbose
+ from dotenv import load_dotenv
+ import os
++from langchain.callbacks.tracers import ConsoleCallbackHandler
+ 
+ load_dotenv()
+ api_key = os.getenv("OPENAI_API_KEY")
+@@ -18,7 +19,7 @@
+     prompt_template = "tell me a joke about {topic}"
+     prompt = ChatPromptTemplate.from_template(prompt_template)
+     chain = prompt | model | output_parser
+-    return chain.invoke({"topic": topic})
++    return chain.invoke({"topic": topic}, config={'callbacks': [ConsoleCallbackHandler()]})
+ 
+ if __name__ == "__main__":
+     result = run_agent("ice cream")

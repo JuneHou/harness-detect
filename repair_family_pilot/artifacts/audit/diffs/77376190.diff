@@ -1,0 +1,13 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -38,8 +38,8 @@
+     vectorIndex = createVecorIndex('docs')
+     
+     def chatbot(input_index):
+-        query_engine = vectorIndex.as_query_engine()
+-        response = query_engine.query(input_index)
++        query_engine = vectorIndex.as_chat_engine()
++        response = query_engine.chat(input_index)
+         return response.response
+    
+     result = chatbot(user_input)

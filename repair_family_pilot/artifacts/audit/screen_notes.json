@@ -1,0 +1,28 @@
+[
+  {
+    "case_id": "76906469",
+    "status": "preview_written",
+    "outcomes": {
+      "empty": [
+        "task_failure",
+        "task_failure",
+        "task_failure"
+      ],
+      "A": [
+        "task_failure",
+        "task_failure",
+        "task_failure"
+      ],
+      "B": [
+        "task_failure",
+        "task_failure",
+        "task_failure"
+      ],
+      "AB": [
+        "success",
+        "success",
+        "success"
+      ]
+    }
+  }
+]

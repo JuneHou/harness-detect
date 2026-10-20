@@ -1,0 +1,88 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -8,42 +8,72 @@
+ from langchain_openai import ChatOpenAI
+ from langchain.prompts import ChatPromptTemplate
+ from langchain.schema.runnable import RunnablePassthrough
+-from langchain.schema.output_parser import StrOutputParser
++from langchain.output_parsers import StructuredOutputParser, ResponseSchema
+ 
+ load_dotenv()
+ 
+ def run_agent(query):
+     loader = CSVLoader(file_path="control.csv")
+     data = loader.load()
++
+     text_splitter = CharacterTextSplitter(chunk_size=500, chunk_overlap=50)
+     chunks = text_splitter.split_documents(data)
+-    vectorstore = Chroma.from_documents(documents=chunks, embedding=OpenAIEmbeddings())
++
++    vectorstore = Chroma.from_documents(
++        documents=chunks,
++        embedding=OpenAIEmbeddings()
++    )
+     retriever = vectorstore.as_retriever()
+-    template = """You are an assistant for question-answering tasks.
+ 
+-    Use the following pieces of retrieved context to answer the question.
++    response_schema = ResponseSchema(
++        name="results",
++        description='''A list of objects like:
++        [{"title": "", "genre": "", "budget": ""}]'''
++    )
+ 
+-    If you don't know the answer, just say that you don't know.
++    output_parser = StructuredOutputParser.from_response_schemas(
++        [response_schema]
++    )
+ 
+-    Use three sentences maximum and keep the answer concise.
++    format_instructions = output_parser.get_format_instructions()
+ 
+-    Question: {question}
++    template = """You are an assistant for question answering tasks.
+ 
+-    Context: {context}
++Use the following retrieved context to answer the question.
+ 
+-    Answer:
++If the information is not present, return an empty list.
+ 
+-    """
++Question: {question}
++
++Context: {context}
++
++{format_instructions}
++"""
+ 
+     prompt = ChatPromptTemplate.from_template(template)
+-    llm = ChatOpenAI(temperature=0, model="gpt-3.5-turbo",verbose=True)
+ 
+-    rag_chain = (  {"context": retriever,  "question": RunnablePassthrough()}      | prompt      | llm     | StrOutputParser()  )
++    llm = ChatOpenAI(
++        temperature=0,
++        model="gpt-3.5-turbo",
++        verbose=True
++    )
++
++    rag_chain = (
++        {
++            "context": retriever,
++            "question": RunnablePassthrough(),
++            "format_instructions": lambda _: format_instructions
++        }
++        | prompt
++        | llm
++        | output_parser
++    )
+ 
+     output = rag_chain.invoke(query)
+     return output
+ 
++
+ if __name__ == "__main__":
+-    query = "Find movies for family, combining their Name and Description."
++    query = "Find movies for family. Return only the title, genre and budget."
+     result = run_agent(query)
+     print(result)

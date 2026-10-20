@@ -1,0 +1,40 @@
+{
+  "selected_case": "76906469",
+  "model_config": {
+    "model": "gpt-6-luna",
+    "reasoning_effort": "none",
+    "temperature": 0,
+    "applied_to": [
+      "agent",
+      "llm-math"
+    ],
+    "configurations": [
+      "empty",
+      "A",
+      "B",
+      "AB"
+    ]
+  },
+  "repeats": 20,
+  "group_count": 12,
+  "cell_count": 12,
+  "split": {
+    "prior_question-user-gap2": "donor",
+    "prior_question-user-gap5": "donor",
+    "prior_question-assistant-gap2": "donor",
+    "stated_capital-user-gap0": "donor",
+    "stated_capital-user-gap5": "donor",
+    "stated_capital-assistant-gap0": "donor",
+    "prior_question-user-gap0": "calibration",
+    "stated_capital-assistant-gap5": "calibration",
+    "prior_question-assistant-gap0": "calibration",
+    "prior_question-assistant-gap5": "test",
+    "stated_capital-assistant-gap2": "test",
+    "stated_capital-user-gap2": "test"
+  },
+  "resource_caps": {
+    "max_model_calls": 4000,
+    "max_episodes": 960
+  },
+  "scientific_qualification": "collection"
+}

@@ -1,0 +1,49 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -2,9 +2,12 @@
+ from llama_index.core import Settings
+ from llama_index.core.callbacks import CallbackManager, TokenCountingHandler
+ from transformers import AutoTokenizer
++from transformers import XLMRobertaTokenizerFast
+ import os
+ 
+-
++class MyTokenCounterTokenizerForLlamaIndex(XLMRobertaTokenizerFast):
++    def __call__(self, *args, **kwargs):
++        return super().__call__(*args, **kwargs).input_ids
+ 
+ def create_embedding_model(_chunk_size=None):
+     print('loading embeddings...')
+@@ -22,22 +25,25 @@
+ 
+ def run_agent(text: str):
+     chunk_size = 512
++    model_name = "BAAI/bge-m3"
++    
++    llama_index_tokenizer = MyTokenCounterTokenizerForLlamaIndex.from_pretrained(model_name)
++    
+     embed_model = create_embedding_model(_chunk_size=chunk_size)
+-
+-    token_counter = TokenCountingHandler()
++    
++    token_counter = TokenCountingHandler(tokenizer=llama_index_tokenizer)
+     callback_manager = CallbackManager([token_counter])
+-
++    
+     Settings.embed_model = embed_model
+     Settings.callback_manager = callback_manager
+-
++    
+     embedding_vector = Settings.embed_model.get_text_embedding(text)
+     embedding_tokens = token_counter.total_embedding_token_count
+-
+-    model_name = "BAAI/bge-m3"
++    
+     tokenizer = AutoTokenizer.from_pretrained(model_name)
+-
+     tokenized_text = tokenizer(text)
+     token_count = len(tokenized_text['input_ids'])
++    
+     return embedding_tokens, token_count
+ 
+ if __name__ == "__main__":

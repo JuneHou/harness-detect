@@ -1,0 +1,14 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -43,10 +43,9 @@
+         ids=[document_id],
+     )
+ 
+-    return db._collection.get()
++    return db._collection.get(include=['embeddings'])
+ 
+ 
+ if __name__ == "__main__":
+     result = run_agent()
+     print(result)
+-    

@@ -1,0 +1,11 @@
+--- run_buggy.py
++++ run_fixed.py
+@@ -19,7 +19,7 @@
+ 
+ 
+     chain = ConversationalRetrievalChain.from_llm(ChatOpenAI(temperature=0.3), 
+-                                    retriever=search.as_retriever(search_kwargs={"k": 1}),
++                                    retriever=search.as_retriever(search_kwargs={"k": 12}),
+                                     return_source_documents=True)
+     result = chain({"question": prompt, 'chat_history': ""}, return_only_outputs=True)
+     return result["answer"]
